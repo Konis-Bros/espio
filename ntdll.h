@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <psapi.h>
 
 #define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
 
@@ -32,6 +33,67 @@ typedef struct _CLIENT_ID {
 	HANDLE UniqueThread;
 } CLIENT_ID, * PCLIENT_ID;
 
+typedef struct _RTL_DRIVE_LETTER_CURDIR {
+	USHORT Flags;
+	USHORT Length;
+	ULONG TimeStamp;
+	UNICODE_STRING DosPath;
+} RTL_DRIVE_LETTER_CURDIR, * PRTL_DRIVE_LETTER_CURDIR;
+
+typedef struct _SECTION_IMAGE_INFORMATION {
+	PVOID EntryPoint;
+	ULONG StackZeroBits;
+	ULONG StackReserved;
+	ULONG StackCommit;
+	ULONG ImageSubsystem;
+	WORD SubSystemVersionLow;
+	WORD SubSystemVersionHigh;
+	ULONG Unknown1;
+	ULONG ImageCharacteristics;
+	ULONG ImageMachineType;
+	ULONG Unknown2[3];
+} SECTION_IMAGE_INFORMATION, * PSECTION_IMAGE_INFORMATION;
+
+typedef struct _RTL_USER_PROCESS_PARAMETERS {
+	ULONG MaximumLength;
+	ULONG Length;
+	ULONG Flags;
+	ULONG DebugFlags;
+	PVOID ConsoleHandle;
+	ULONG ConsoleFlags;
+	HANDLE StdInputHandle;
+	HANDLE StdOutputHandle;
+	HANDLE StdErrorHandle;
+	UNICODE_STRING CurrentDirectoryPath;
+	HANDLE CurrentDirectoryHandle;
+	UNICODE_STRING DllPath;
+	UNICODE_STRING ImagePathName;
+	UNICODE_STRING CommandLine;
+	PVOID Environment;
+	ULONG StartingPositionLeft;
+	ULONG StartingPositionTop;
+	ULONG Width;
+	ULONG Height;
+	ULONG CharWidth;
+	ULONG CharHeight;
+	ULONG ConsoleTextAttributes;
+	ULONG WindowFlags;
+	ULONG ShowWindowFlags;
+	UNICODE_STRING WindowTitle;
+	UNICODE_STRING DesktopName;
+	UNICODE_STRING ShellInfo;
+	UNICODE_STRING RuntimeData;
+	RTL_DRIVE_LETTER_CURDIR DLCurrentDirectory[0x20];
+} RTL_USER_PROCESS_PARAMETERS, * PRTL_USER_PROCESS_PARAMETERS;
+
+typedef struct _RTL_USER_PROCESS_INFORMATION {
+	ULONG Size;
+	HANDLE ProcessHandle;
+	HANDLE ThreadHandle;
+	CLIENT_ID ClientId;
+	SECTION_IMAGE_INFORMATION ImageInformation;
+} RTL_USER_PROCESS_INFORMATION, * PRTL_USER_PROCESS_INFORMATION;
+
 
 /* functions */
 typedef NTSTATUS(NTAPI* NT_CREATE_SECTION) (
@@ -43,7 +105,7 @@ typedef NTSTATUS(NTAPI* NT_CREATE_SECTION) (
 	IN ULONG SectionAttributes,
 	IN HANDLE FileHandle OPTIONAL
 	);
-NT_CREATE_SECTION NtCreateSection;
+extern NT_CREATE_SECTION NtCreateSection;
 
 typedef NTSTATUS(NTAPI* NT_MAP_VIEW_OF_SECTION) (
 	IN HANDLE SectionHandle,
@@ -57,13 +119,13 @@ typedef NTSTATUS(NTAPI* NT_MAP_VIEW_OF_SECTION) (
 	IN ULONG AllocationType OPTIONAL,
 	IN ULONG Protect
 	);
-NT_MAP_VIEW_OF_SECTION NtMapViewOfSection;
+extern NT_MAP_VIEW_OF_SECTION NtMapViewOfSection;
 
 typedef NTSTATUS(NTAPI* NT_UNMAP_VIEW_OF_SECTION) (
 	IN HANDLE ProcessHandle,
 	IN PVOID BaseAddress
 	);
-NT_UNMAP_VIEW_OF_SECTION NtUnmapViewOfSection;
+extern NT_UNMAP_VIEW_OF_SECTION NtUnmapViewOfSection;
 
 typedef NTSTATUS(NTAPI* NT_WRITE_VIRTUAL_MEMORY) (
 	IN HANDLE ProcessHandle,
@@ -72,15 +134,40 @@ typedef NTSTATUS(NTAPI* NT_WRITE_VIRTUAL_MEMORY) (
 	IN ULONG NumberOfBytesToWrite,
 	OUT PULONG NumberOfBytesWritten OPTIONAL
 	);
-NT_WRITE_VIRTUAL_MEMORY NtWriteVirtualMemory;
+extern NT_WRITE_VIRTUAL_MEMORY NtWriteVirtualMemory;
 
-typedef NTSTATUS(NTAPI* NT_OPEN_PROCESS) (
-	OUT PHANDLE ProcessHandle,
-	IN ACCESS_MASK AccessMask,
-	IN POBJECT_ATTRIBUTES ObjectAttributes,
-	IN PCLIENT_ID ClientId OPTIONAL
+typedef VOID(NTAPI* RTL_INIT_UNICODE_STRING) (
+	OUT PUNICODE_STRING DestinationString,
+	IN PCWSTR SourceString OPTIONAL
 	);
-NT_OPEN_PROCESS NtOpenProcess;
+extern RTL_INIT_UNICODE_STRING RtlInitUnicodeString;
+
+typedef NTSTATUS(NTAPI* RTL_CREATE_PROCESS_PARAMETERS) (
+	OUT PRTL_USER_PROCESS_PARAMETERS* ProcessParameters,
+	IN PUNICODE_STRING ImagePathName,
+	IN PUNICODE_STRING DllPath OPTIONAL,
+	IN PUNICODE_STRING CurrentDirectoryPath OPTIONAL,
+	IN PUNICODE_STRING CommandLine OPTIONAL,
+	IN PVOID Environment OPTIONAL,
+	IN PUNICODE_STRING WindowTitle OPTIONAL,
+	IN PUNICODE_STRING DesktopName OPTIONAL,
+	IN PUNICODE_STRING ShellInfo OPTIONAL,
+	IN PUNICODE_STRING RuntimeData OPTIONAL
+	);
+extern RTL_CREATE_PROCESS_PARAMETERS RtlCreateProcessParameters;
+
+typedef NTSTATUS(NTAPI* RTL_CREATE_USER_PROCESS) (
+	IN PUNICODE_STRING ImagePath,
+	IN ULONG ObjectAttributes,
+	IN OUT PRTL_USER_PROCESS_PARAMETERS ProcessParameters,
+	IN PSECURITY_DESCRIPTOR ProcessSecurityDescriptor OPTIONAL,
+	IN PSECURITY_DESCRIPTOR ThreadSecurityDescriptor OPTIONAL,
+	IN HANDLE ParentProcess,
+	IN BOOLEAN InheritHandles,
+	IN HANDLE DebugPort OPTIONAL,
+	IN HANDLE ExceptionPort OPTIONAL,
+	OUT PRTL_USER_PROCESS_INFORMATION ProcessInformation);
+extern RTL_CREATE_USER_PROCESS RtlCreateUserProcess;
 
 typedef NTSTATUS(NTAPI* RTL_CREATE_USER_THREAD) (
 	IN HANDLE ProcessHandle,
@@ -94,16 +181,22 @@ typedef NTSTATUS(NTAPI* RTL_CREATE_USER_THREAD) (
 	OUT PHANDLE ThreadHandle,
 	OUT PCLIENT_ID ClientID
 	);
-RTL_CREATE_USER_THREAD RtlCreateUserThread;
+extern RTL_CREATE_USER_THREAD RtlCreateUserThread;
 
 typedef NTSTATUS(NTAPI* NT_WAIT_FOR_SINGLE_OBJECT) (
 	IN HANDLE ObjectHandle,
 	IN BOOLEAN Alertable,
 	IN PLARGE_INTEGER TimeOut OPTIONAL
 	);
-NT_WAIT_FOR_SINGLE_OBJECT NtWaitForSingleObject;
+extern NT_WAIT_FOR_SINGLE_OBJECT NtWaitForSingleObject;
 
 typedef NTSTATUS(NTAPI* NT_CLOSE) (
 	IN HANDLE ObjectHandle
 	);
-NT_CLOSE NtClose;
+extern NT_CLOSE NtClose;
+
+
+/* helper functions */
+void unhookNtdll(HMODULE ntdll);
+void loadNtdll(HMODULE ntdll);
+void checkNtStatus(NTSTATUS status);
