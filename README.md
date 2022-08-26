@@ -9,7 +9,7 @@
 - Process Injection - injecting the payload to werfault.exe
 
 ## Requirements
-Jinx requires [Python3](https://www.python.org/) and a C++ compiler to run (we will be using [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/))
+Jinx requires [Python3](https://www.python.org/) and a C++ compiler to run (we will be using [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/)).
 
 ## Usage
 In this demonstration we will generate a shellcode using msfvenom in our kali machine:
