@@ -5,7 +5,7 @@
 #include "base64.h"
 #include "resource.h"
 
-#define LARGE_NUMBER 333333
+#define LARGE_NUMBER 500000
 #define INJECTED_PROCESS_NAME L"\\??\\C:\\Windows\\System32\\werfault.exe"
 
 void sleep();
