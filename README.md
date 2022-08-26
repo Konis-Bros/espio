@@ -32,5 +32,5 @@ Open Visual Studio create a project and import the files as follow:
 Build The project and drop the executable on the victim's machine.
 
 On the attacker's machine use metasploit's multi/handler on port 1337
-</br>
+<br>
 and on the victim's machine execute Jinx.
