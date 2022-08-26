@@ -1,5 +1,5 @@
 # Jinx (For Educational Purposes Only)
-## Shellcode obfuscation tool to avoid AV/EDR
+## Shellcode obfuscation tool to avoid AV/EDR.
 [![Python 3.10.4](https://img.shields.io/badge/Python-3.10.4-yellow.svg)](https://www.python.org/) [![C++ 14](https://img.shields.io/badge/C%2B%2B-14-blue)](https://visualstudio.microsoft.com/vs/features/cplusplus/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
@@ -9,7 +9,7 @@
 - Process Injection - injecting the payload to werfault.exe
 
 ## Installation and use
-Jinx require [Python3](https://www.python.org/) and C++ compiler to run (we will be using [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/))
+Jinx requires [Python3](https://www.python.org/) and C++ compiler to run (we will be using [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/))
 
 In this demonstration we will generate a shellcode using msfvenom in our kali machine:
 ```bash
@@ -38,3 +38,6 @@ On the attacker's machine use metasploit's multi/handler on port 1337 and on the
 [dkonis](https://github.com/dkonis) - Research & Development
 <br>
 [SheL3G](https://github.com/SheL3G) - Research
+
+## License
+Distributed under the MIT License. See LICENSE.txt for more information.
