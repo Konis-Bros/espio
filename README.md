@@ -26,7 +26,7 @@ Our shellcode then be obfuscated and saved in - obfuscatedPayload.bin with the k
 Open Visual Studio create a project and import the files as follow:
 
 - Headers Files > right click > Add > Existing Item > (base64.h, ntdll.h, resource.h)
-- Resource Files > right click > Add > Resource > Import > (key.bin, obfuscatedPayload.bin)
+- Resource Files > right click > Add > Existing Item > (key.bin, obfuscatedPayload.bin)
 - Source Files > right click > Add > Existing Item > (base64.cpp, main.cpp, ntdll.cpp)
 
 Build The project and drop the executable on the victim's machine.
