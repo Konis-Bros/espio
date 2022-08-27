@@ -488,7 +488,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-## Ignore Jinx Files
+## Ignore Espio Files
 # Payload Files
-loader/Jinx/obfuscatedPayload.bin
-loader/Jinx/key.bin
+loader/Espio/obfuscatedPayload.bin
+loader/Espio/key.bin
