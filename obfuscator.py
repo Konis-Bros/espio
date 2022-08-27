@@ -31,12 +31,12 @@ def main():
                 payload = payload_file.read()
             key = generate_key()
             obfuscated_payload = obfuscate_payload(payload, key)
-            output_path = "loader/Jinx"
-            if os.path.exists("loader/Jinx"):
-                print("[+] The key and the payload are in loader/Jinx")
+            output_path = "loader/Espio"
+            if os.path.exists("loader/Espio"):
+                print("[+] The key and the payload are placed in loader/Espio")
             else:
                 output_path = '.'
-                print("[*] WARNING: loader/Jinx was not found! The key and the payload will be placed in the current directory")
+                print("[*] WARNING: loader/Espio was not found! The key and the payload will be placed in the current directory")
             with open(f"{output_path}/key.bin", 'w') as key_file:
                 key_file.write(key)
             with open(f"{output_path}/obfuscatedPayload.bin", 'w') as obfuscated_payload_file:
