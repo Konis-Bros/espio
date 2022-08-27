@@ -23,9 +23,11 @@ python3 obfuscator.py <Path to the shellcode>/shellcode
 ```
 Our shellcode then be obfuscated and saved in - **obfuscatedPayload.bin** with the key - **key.bin**.
 
-Open Visual Studio create a project and drop the following files to the project's directory:
+Open Visual Studio, create a project and drop the following files into the project's directory:
 
-(base64.cpp, main.cpp, ntdll.cpp, base64.h, ntdll.h, resource.h, resource.rc ,key.bin, obfuscatedPayload.bin)
+base64.cpp, main.cpp, ntdll.cpp, base64.h, ntdll.h, resource.h, resource.rc ,key.bin, obfuscatedPayload.bin
+
+![project's_directory](https://gitlab.com/RonKon/crypter/-/blob/develop/images/project's_directory.PNG?raw=true)
 
 then import the files as follow:
 
@@ -33,7 +35,9 @@ then import the files as follow:
 - Resource Files > right click > Add > Existing Item > (resource.rc ,key.bin, obfuscatedPayload.bin)
 - Source Files > right click > Add > Existing Item > (base64.cpp, main.cpp, ntdll.cpp)
 
-Build The project and drop the executable on the victim's machine.
+Build The project and drop the executable in the victim's machine.
+
+![solution_explorer](https://gitlab.com/RonKon/crypter/-/blob/develop/images/solution_explorer.PNG?raw=true)
 
 On the attacker's machine use metasploit's multi/handler on port 1337 and on the victim's machine execute Jinx.
 
