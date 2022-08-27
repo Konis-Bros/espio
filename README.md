@@ -21,12 +21,16 @@ Next we will use the obfuscator.py tool to obfuscate the shellcode:
 ```bash
 python3 obfuscator.py <Path to the shellcode>/shellcode
 ```
-Our shellcode then be obfuscated and saved in - obfuscatedPayload.bin with the key - key.bin.
+Our shellcode then be obfuscated and saved in - **obfuscatedPayload.bin** with the key - **key.bin**.
 
-Open Visual Studio create a project and import the files as follow:
+Open Visual Studio create a project and drop the following files to the project's directory:
+
+(base64.cpp, main.cpp, ntdll.cpp, base64.h, ntdll.h, resource.h, resource.rc ,key.bin, obfuscatedPayload.bin)
+
+then import the files as follow:
 
 - Headers Files > right click > Add > Existing Item > (base64.h, ntdll.h, resource.h)
-- Resource Files > right click > Add > Existing Item > (key.bin, obfuscatedPayload.bin)
+- Resource Files > right click > Add > Existing Item > (resource.rc ,key.bin, obfuscatedPayload.bin)
 - Source Files > right click > Add > Existing Item > (base64.cpp, main.cpp, ntdll.cpp)
 
 Build The project and drop the executable on the victim's machine.
