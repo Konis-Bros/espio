@@ -4,7 +4,7 @@ import random
 import base64
 
 
-def obfuscate(payload, key):
+def obfuscate_payload(payload, key):
     encrypted_payload = ""
     for i in range(len(payload)):
         obf_char = chr(payload[i] ^ ord(key[i % len(key)]))
@@ -17,12 +17,10 @@ def obfuscate(payload, key):
     obfuscated_payload = obfuscated_payload_bytes.decode("UTF-8")
     return "".join(obfuscated_payload)
 
- 
+
 def generate_key():
     letters = [chr(ascii_value) for ascii_value in range(33, 127)]
     key = "".join(random.choices(letters, k=random.randint(100, 500)))
-    with open("key.bin", 'w') as key_file:
-        key_file.write(key)
     return key
 
 
@@ -32,8 +30,11 @@ def main():
             with open(sys.argv[1], "rb") as payload_file:
                 payload = payload_file.read()
             key = generate_key()
-            obfuscated_payload = obfuscate(payload, key)
-            with open("obfuscatedPayload.bin", 'w') as obfuscated_payload_file:
+            obfuscated_payload = obfuscate_payload(payload, key)
+            output_path = "loader/Jinx" if os.path.exists("loader/Jinx") else '.'
+            with open(f"{output_path}/key.bin", 'w') as key_file:
+                key_file.write(key)
+            with open(f"{output_path}/obfuscatedPayload.bin", 'w') as obfuscated_payload_file:
                 obfuscated_payload_file.write(obfuscated_payload)
         else:
             print(f"{sys.argv[1]} does not exists!")
