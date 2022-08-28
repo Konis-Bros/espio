@@ -14,7 +14,7 @@ Espio requires [Python3](https://www.python.org/) and [Visual Studio](https://vi
 ## Usage
 1. Clone the repository:
 ```bash
-git clone <url>
+git clone https://github.com/Konis-Bros/Espio.git
 ```
 
 2. Generate the shellcode. In this demonstration we will be using msfvenom in a kali machine:
