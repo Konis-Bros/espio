@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by Jinx.rc
+// Used by Espio.rc
 //
 #define IDR_OBFUSCATEDPAYLOAD1          101
 #define IDR_KEY1                        102

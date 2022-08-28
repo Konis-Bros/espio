@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{70c4771c-7064-4881-9f2f-56db0392bb41}</ProjectGuid>
-    <RootNamespace>Jinx</RootNamespace>
+    <ProjectGuid>{1f3f2c83-5238-4c73-81b5-9537961d3b2d}</ProjectGuid>
+    <RootNamespace>Espio</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,13 +127,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ResourceCompile Include="Jinx.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="key.bin" />
-    <None Include="obfuscatedPayload.bin" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="base64.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ntdll.cpp" />
@@ -142,6 +135,13 @@
     <ClInclude Include="base64.h" />
     <ClInclude Include="ntdll.h" />
     <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Espio.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="key.bin" />
+    <None Include="obfuscatedPayload.bin" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
