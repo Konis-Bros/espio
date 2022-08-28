@@ -30,18 +30,35 @@ python3 obfuscator.py shellcode
 
 4. Open loader/Espio.sln, the Visual Studio solution file.
 
-5. Build The project (Recommended: change the build configuration from Debug to Release).<br>Note: The executable file will be located at loader/x64/Release/Espio.exe or loader/x64/Debug/Espio.exe, depends on the build configuration.
+5. Build The project. Note that the executable file will be located at loader/x64/Debug/Espio.exe.
 
 6. On the attacker's machine, listen for TCP connections on the defined port. In our case, run metasploit's multi/handler on port 1337.
 
 7. Drop the executable onto the victim's machine and run it.
 
-## Authors and acknowledgment
-[dkonis](https://github.com/dkonis) - Research & Development
-<br>
-[RonKon](https://github.com/RonKonis) - Development
-<br>
-[SheL3G](https://github.com/SheL3G) - Research
+## Recommendations
+- In step 2 and 6, create meterpreter session over HTTPS. For more information see [Meterpreter HTTP/HTTPS Communication](https://www.rapid7.com/blog/post/2011/06/29/meterpreter-httphttps-communication/).
+- In step 5, change the build configuration from Debug to Release. Note that the executable file will now be located at loader/x64/Realease/Espio.exe.
+
+## Tests
+Espio was examined against:
+
+### Windows Defender:
+
+<img src="images/defender_bypass.png" alt="Defeder Bypass">
+
+### Avira Prime:
+
+<img src="images/avira_bypass.png" alt="Avira Bypass">
+
+### ANTISCAN:
+
+<img src="images/antiscan.png" alt="ANTISCAN">
+
+## Authors and acknowledgments
+- [@dkonis](https://github.com/dkonis) - Research & Development
+- [@RonKon](https://github.com/RonKonis) - Development
+- [@SheL3G](https://github.com/SheL3G) - Research
 
 ## License
 Distributed under the MIT License. See LICENSE.txt for more information.
