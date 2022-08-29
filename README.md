@@ -38,7 +38,7 @@ python3 obfuscator.py shellcode
 
 ## Recommendations
 - In step 2 and 6, create meterpreter session over HTTPS. For more information see [Meterpreter HTTP/HTTPS Communication](https://www.rapid7.com/blog/post/2011/06/29/meterpreter-httphttps-communication/).
-- In step 5, change the build configuration from Debug to Release. Note that the executable file will now be located at loader/x64/Realease/Espio.exe.
+- In step 5, change the build configuration from Debug to Release. Note that the executable file will now be located at loader/x64/Release/Espio.exe.
 
 ## Tests
 Espio was examined against:
@@ -55,7 +55,7 @@ Espio was examined against:
 
 <img src="images/antiscan.png" alt="ANTISCAN">
 
-## Authors and acknowledgments
+## Authors and Acknowledgments
 - [@dkonis](https://github.com/dkonis) - Research & Development
 - [@RonKon](https://github.com/RonKonis) - Development
 - [@SheL3G](https://github.com/SheL3G) - Research
