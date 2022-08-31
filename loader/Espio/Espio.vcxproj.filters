@@ -24,6 +24,9 @@
     <ClCompile Include="ntdll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="persist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base64.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="persist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
