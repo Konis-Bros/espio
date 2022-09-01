@@ -492,3 +492,4 @@ dmypy.json
 # Payload Files
 loader/Espio/obfuscatedPayload.bin
 loader/Espio/key.bin
+loader/Espio/persistence.bin

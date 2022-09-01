@@ -144,6 +144,7 @@
   <ItemGroup>
     <None Include="key.bin" />
     <None Include="obfuscatedPayload.bin" />
+    <None Include="persistence.bin" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

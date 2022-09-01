@@ -54,5 +54,8 @@
     <None Include="key.bin">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="persistence.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

