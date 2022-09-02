@@ -23,16 +23,18 @@ def generate_key():
     key = "".join(random.choices(letters, k=random.randint(100, 500)))
     return key
 
+
 def persist():
     value = '0'
     answer = input('[*] Do you want to enable persistence? (Y/N) ').lower()
     if answer == 'y':
         letters = [chr(ascii_value) for ascii_value in range(97, 123)]
         value = "".join(random.choices(letters, k=random.randint(4, 10)))
-        print("[+] Espio Will persist")
+        print("[+] Espio will persist")
     else:
         print("[*] Persistence will not be created")
     return value
+
 
 def main():
     if len(sys.argv) == 2:
